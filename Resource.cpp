@@ -25,8 +25,8 @@ bool Resource::waitlist_is_free() const {
 }
 
 std::pair<unsigned short, unsigned short> Resource::dequeueWaitlist() {
-	std::list<std::pair<unsigned short, unsigned short>>::iterator it = waitlist.begin();
-	std::pair<unsigned short, unsigned short> j;
+	std::list<std::pair<short, short>>::iterator it = waitlist.begin();
+	std::pair<unsigned short, unsigned short> j = std::make_pair(-1, -1);
 	for (it; it != waitlist.end(); ++it) {
 		if (it->second <= state) {
 			state -= it->second;
@@ -42,7 +42,7 @@ std::pair<unsigned short, unsigned short> Resource::dequeueWaitlist() {
 }
 
 void Resource::removeFromWaitingList(unsigned short i) {
-	std::list<std::pair<unsigned short, unsigned short>>::iterator it = waitlist.begin();
+	std::list<std::pair<short, short>>::iterator it = waitlist.begin();
 	for (it; it != waitlist.end(); ++it) {
 		if (it->first == i) {
 			waitlist.remove(*it);

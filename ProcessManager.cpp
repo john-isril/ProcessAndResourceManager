@@ -97,6 +97,20 @@ size_t ProcessManager::subDestroy(unsigned short j) {
 		RCB[i].removeFromWaitingList(j);
 	}
 
+	std::list<std::pair<unsigned short, unsigned short>>::iterator it1 = PCB[j].resources.begin();
+
+	for (it1; it1 != PCB[j].resources.end(); ++it1) {
+		RCB[it1->first].addUnitCount(it1->second);
+
+		std::pair<short, short> p = RCB[it1->first].dequeueWaitlist();
+		while (p.first != -1) {
+			readyList[PCB[p.first].getPriorityLevel()].push_back(p.first);
+			PCB[p.first].setState(Process::State::READY);
+			PCB[p.first].addResource(it1->first, p.second);
+			p = RCB[it1->first].dequeueWaitlist();
+		}
+	}
+
 	PCB[j].releaseResources();
 	PCB[j].setState(Process::State::FREE);
 
@@ -111,7 +125,13 @@ size_t ProcessManager::subDestroy(unsigned short j) {
 	return counter;
 }
 void ProcessManager::destroy(unsigned short j) {
-	if (j != currentRunning && !PCB[currentRunning].isChild(j)) {
+	unsigned short tempParent = PCB[j].getParent();
+
+	while (tempParent != -1 && tempParent != currentRunning) {
+		tempParent = PCB[tempParent].getParent();
+	}
+
+	if (tempParent != currentRunning && j != currentRunning) {
 		std::cout << "-1";
 	}
 	else {
@@ -180,7 +200,7 @@ void ProcessManager::release(unsigned short r, unsigned short n) {
 		}
 	}
 
-	std::pair<unsigned short, unsigned short> j = std::make_pair(-2, -2);
+	std::pair<unsigned short, unsigned short> j;
 	if (!PCB[currentRunning].hasResource(r)) {
 		std::cout << "-1";
 		return;
@@ -189,11 +209,12 @@ void ProcessManager::release(unsigned short r, unsigned short n) {
 	PCB[currentRunning].releaseResource(r, n);
 	RCB[r].addUnitCount(n);
 
-	while (j.first != -1) {
-		j = RCB[r].dequeueWaitlist();
+	j = RCB[r].dequeueWaitlist();
+	while (j.first != -1) {	
 		readyList[PCB[j.first].getPriorityLevel()].push_back(j.first);
 		PCB[j.first].setState(Process::State::READY);
 		PCB[j.first].addResource(r, j.second);
+		j = RCB[r].dequeueWaitlist();
 	}
 
 	scheduler();

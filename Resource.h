@@ -13,7 +13,7 @@ private:
 public:
 	Resource();
 	unsigned short inventory, state;
-	std::list<std::pair<unsigned short, unsigned short>> waitlist;
+	std::list<std::pair<short, short>> waitlist;
 	bool is_free() const;
 	void changeState();
 	void addProcessToWaitlist(unsigned short i, unsigned short k);
