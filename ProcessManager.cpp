@@ -58,7 +58,7 @@ void ProcessManager::init() {
 
 void ProcessManager::create(unsigned short p) {
 	if (p < 1 || p > 3) {
-		std::cout << "-1";
+		std::cout << "-1 ";
 		return;
 	}
 
@@ -80,7 +80,7 @@ void ProcessManager::create(unsigned short p) {
 		
 	}
 	else {
-		std::cout << "-1";
+		std::cout << "-1 ";
 	}
 }
 
@@ -125,6 +125,10 @@ size_t ProcessManager::subDestroy(unsigned short j) {
 	return counter;
 }
 void ProcessManager::destroy(unsigned short j) {
+	if (PCB[j].getParent() == -1) {
+		std::cout << "-1 ";
+		return;
+	}
 	unsigned short tempParent = PCB[j].getParent();
 
 	while (tempParent != -1 && tempParent != currentRunning) {
@@ -132,7 +136,7 @@ void ProcessManager::destroy(unsigned short j) {
 	}
 
 	if (tempParent != currentRunning && j != currentRunning) {
-		std::cout << "-1";
+		std::cout << "-1 ";
 	}
 	else {
 		size_t totalDestroyed = subDestroy(j);
@@ -144,20 +148,20 @@ void ProcessManager::destroy(unsigned short j) {
 
 void ProcessManager::request(unsigned short r, unsigned short n) {
 	if (currentRunning == 0 || r < 0 || r > (N - 1)) {
-		std::cout << "-1";
+		std::cout << "-1 ";
 		return;
 	}
 
 	if ((r == 0 || r == 1) && n != 1) {
-		std::cout << "-1";
+		std::cout << "-1 ";
 		return;
 	}
 	else if (r == 2 && n > 2) {
-		std::cout << "-1";
+		std::cout << "-1 ";
 		return;
 	}
 	else if (r == 3 && n > 3) {
-		std::cout << "-1";
+		std::cout << "-1 ";
 		return;
 	}
 	
@@ -165,7 +169,7 @@ void ProcessManager::request(unsigned short r, unsigned short n) {
 	for (it; it != PCB[currentRunning].resources.end(); ++it) {
 		if (it->first == r) {
 			if ((n + it->second) > RCB[r].inventory) {
-				std::cout << "-1";
+				std::cout << "-1 ";
 				return;
 			}
 		}
@@ -186,7 +190,7 @@ void ProcessManager::request(unsigned short r, unsigned short n) {
 
 void ProcessManager::release(unsigned short r, unsigned short n) {
 	if (r < 0 || r > 3) {
-		std::cout << "-1";
+		std::cout << "-1 ";
 		return;
 	}
 
@@ -194,15 +198,15 @@ void ProcessManager::release(unsigned short r, unsigned short n) {
 	for (it; it != PCB[currentRunning].resources.end(); ++it) {
 		if (it->first == r) {
 			if (n > it->second) {
-				std::cout << "-1";
+				std::cout << "-1 ";
 				return;
 			}
 		}
 	}
 
-	std::pair<unsigned short, unsigned short> j;
+	std::pair<short, short> j;
 	if (!PCB[currentRunning].hasResource(r)) {
-		std::cout << "-1";
+		std::cout << "-1 ";
 		return;
 	}
 
@@ -233,17 +237,15 @@ void ProcessManager::timeout() {
 	unsigned short head;
 	int i = 0;
 
+	int index;
 	for (i = 0; i < 3; i++) {
-		if (readyList[i].empty()) {
-			break;
-		}
-		else {
+		if (!readyList[i].empty()) {
 			head = readyList[i].front();
+			index = i;
 		}
 	}
-	i--;
 
-	readyList[i].pop_front();
-	readyList[i].push_back(head);
+	readyList[index].pop_front();
+	readyList[index].push_back(head);
 	scheduler();
 }

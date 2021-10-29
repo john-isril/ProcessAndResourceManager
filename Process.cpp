@@ -19,7 +19,7 @@ void Process::setParent(short parentIndex) {
 	this->parentIndex = parentIndex;
 }
 
-unsigned short Process::getParent() const {
+short Process::getParent() const {
 	return parentIndex;
 }
 
@@ -48,6 +48,14 @@ bool Process::isChild(unsigned short c) {
 }
 
 void Process::addResource(unsigned short r, unsigned short k) {
+	std::list<std::pair<unsigned short, unsigned short>>::iterator it = resources.begin();
+	for (it; it != resources.end(); ++it) {
+		if (it->first == r) {
+			it->second += k;
+			return;
+		}
+	}
+
 	resources.push_back(std::make_pair(r, k));
 }
 

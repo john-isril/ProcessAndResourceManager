@@ -24,7 +24,7 @@ public:
 	State getState() const;
 	void setState(State newState);
 	void setParent(short parentIndex);
-	unsigned short getParent() const;
+	short getParent() const;
 	size_t getNumOfChildren() const;
 	void removeChild(unsigned short childIndex);
 	void removeChildren();
