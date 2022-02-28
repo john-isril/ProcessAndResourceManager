@@ -1,6 +1,5 @@
-Project 1
+Process And Resource Manager Simulation
 Name: John Isril
-ID Number: 75516693
 
 This project was written in C++. It can be compiled and executed with the following commands.
 1) Enter "g++ -o main *.cpp" into the command line to compile and produce an executable called main.exe. 
